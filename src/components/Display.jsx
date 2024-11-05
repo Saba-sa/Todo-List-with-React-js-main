@@ -6,11 +6,12 @@ import Loading from './Loading';
 import { collection, deleteDoc, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
+
 const Display = () => {
   const { tasks, settasks, load, userId } = useAppStore();
-const [error, setError]=useState(false);
-const [errorMsg, setErrorMsg]=useState("");
-  const changeStatus =async (id) => {
+  const [error, setError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const changeStatus = async (id) => {
     setError(false)
     let newStatus;
     settasks((prevTasks) => {
@@ -35,11 +36,11 @@ const [errorMsg, setErrorMsg]=useState("");
       return task.task.id === id;
     })
     const taskRef = doc(db, "users", userId, "tasks", updatedArray[0].id);
-   
+
     try {
-    await updateDoc(taskRef, 
-      { "task.status": newStatus } );
-                console.log("Status updated in Firestore!");
+      await updateDoc(taskRef,
+        { "task.status": newStatus });
+      console.log("Status updated in Firestore!");
     } catch (error) {
       setError(true);
       setErrorMsg("Error updating status in Firestore:", error);
@@ -67,23 +68,22 @@ const [errorMsg, setErrorMsg]=useState("");
       await deleteDoc(taskRef);
       console.log('Document deleted successfully');
     } catch (error) {
-setError(true);
-    setErrorMsg("Error while deleting document ");
+      setError(true);
+      setErrorMsg("Error while deleting document ");
     }
   };
 
   return (
     <div className=" ">
       <div className="flex flex-col  gap-2">
-        <h3 className="text-2xl">Add Tasks:</h3>
         <p>General Task</p>
       </div>
       {
         load ?
-        <Loading />
-        :
-        <div className="block w-full overflow-x-auto p-12 ">
-            {error && <p className="text-red-600">error</p>}
+          <Loading />
+          :
+          <div className="block w-full overflow-x-auto p-12 ">
+            {error && <p className="text-red-600">{errorMsg}</p>}
             <table className="items-center bg-transparent w-full border-collapse ">
               <tbody className="text-2xl">
                 {tasks?.length > 0 ? (

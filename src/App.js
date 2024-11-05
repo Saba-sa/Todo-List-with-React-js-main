@@ -6,23 +6,25 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Login from './components/Login.jsx';
 import Signup from './components/Signup.jsx';
 import Dashboard from './components/Dashboard.jsx';
-import DragAndDropExample from "./components/Handledraganddrop.jsx";
+import { DragDropContext } from 'react-beautiful-dnd';
 
 const App = () => {
   return (
     <div>
       <Context>
+        {/* <DragDropContext> */}
         <BrowserRouter>
-          <DragAndDropExample />
-          {/* <Routes>
+          <Routes>
             <Route path='/' element={<Signup />} />
             <Route path='/signup' element={<Signup />} />
             <Route path='/login' element={<Login />}></Route>
             <Route path='/action' element={<Action />}></Route>
             <Route path='/action/:id' element={<Action />}></Route>
             <Route path='/home' element={<Dashboard />}></Route>
-          </Routes> */}
+          </Routes>
         </BrowserRouter>
+        {/* </DragDropContext> */}
+
       </Context>
     </div>
   )

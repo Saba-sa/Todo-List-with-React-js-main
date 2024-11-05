@@ -19,16 +19,17 @@ const Login = () => {
   const { email, password } = detail;
   const handleGoogleLogin = async () => {
     setLoader(true);
+
     try {
       const result = await signInWithPopup(auth, googleProvider);
+      console.log(result)
       setUserId(result.user.uid);
+      setEmail(result.user.email);
       if (result.user) {
-
         setDetail({
           email: "",
           password: "",
         });
-        setEmail(result.user.email);
         setLoader(false);
         navigate('/home');
       }

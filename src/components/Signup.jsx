@@ -33,17 +33,15 @@ const Signup = () => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       setUserId(userCredential?.user?.uid);
-      console.log('usercredential', userCredential)
-      console.log('usercredential', userCredential.user)
-        setEmail(detail.email);
-        setDetail({
-          email: "",
-          password: "",
-          confirmPassword: "",
-        })
-        setLoader(false);
+      setEmail(detail.email);
+      setDetail({
+        email: "",
+        password: "",
+        confirmPassword: "",
+      })
+      setLoader(false);
 
-        navigate('/home');
+      navigate('/home');
     } catch (error) {
       setLoader(false);
 
@@ -57,16 +55,16 @@ const Signup = () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       setUserId(result.user.uid);
+      setEmail(result.user.email);
 
-        setEmail(detail.email);
-        setDetail({
-          email: "",
-          password: "",
-          confirmPassword: "",
-        })
-        setLoader(false);
+      setDetail({
+        email: "",
+        password: "",
+        confirmPassword: "",
+      })
+      setLoader(false);
 
-        navigate('/home');
+      navigate('/home');
     } catch (error) {
       setLoader(false);
 

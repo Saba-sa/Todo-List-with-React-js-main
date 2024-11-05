@@ -8,6 +8,8 @@ import { useAppStore } from "../hooks/Context";
 import Loading from './Loading';
 import { collection, deleteDoc, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
+import { DragDropContext } from "react-beautiful-dnd";
+
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -76,6 +78,13 @@ const Dashboard = () => {
       setErrorMsg("Error while deleting document ");
     }
   };
+  const onDragEnd = (result) => {
+    // Handle drag and drop result
+    if (!result.destination) return;
+
+    // Move tasks between components if needed
+    // Update tasks state based on the result
+  };
 
   return <div>
     <div className="fixed left-0 top-0 w-64 h-full bg-[#f8f4f3] p-4 z-50 sidebar-menu transition-transform">
@@ -124,75 +133,79 @@ const Dashboard = () => {
 
       <div className="p-6">
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          <div className="bg-white border border-gray-100 shadow-md shadow-black/5 p-6 rounded-md lg:col-span-2">
-            <Display />
-          </div>
-          <div className="bg-white border border-gray-100 shadow-md shadow-black/5 p-6 rounded-md">
-            <div className="flex justify-between mb-4 items-start">
-              <div className="font-medium">Important tasks</div>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <div className="p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+              <div className="bg-white border border-gray-100 shadow-md p-6 rounded-md lg:col-span-2">
+                <Display />
+              </div>
+              <div className="bg-white border border-gray-100 shadow-md shadow-black/5 p-6 rounded-md">
+                <div className="flex justify-between mb-4 items-start">
+                  <div className="font-medium">Important tasks</div>
 
+                </div>
+                <div className="overflow-hidden">
+                  <table className="w-full min-w-[460px]">
+
+                    <tbody>
+
+                      <tr>
+                        <td className="py-2 px-4 border-b border-b-gray-50 bg-gray-100">
+                          {tasks?.length > 0 ? (
+                            tasks?.map((i, index) => {
+                              const { id, task, status } = i;
+                              return (
+                                <tr key={index} className="w-full">
+                                  <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left text-blueGray-700">
+                                    <input
+                                      type="checkbox"
+                                      name="status"
+                                      value={status}
+                                      checked={status}
+                                      onChange={() => changeStatus(id)}
+                                    />
+                                  </th>
+                                  <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 whitespace-nowrap p-4 text-lg">
+                                    <p className={status ? "text-gray-400 line-through" : "text-black "}
+                                      onClick={() => changeStatus(id)}>
+                                      {task}
+                                    </p>
+                                  </td>
+                                  <td>
+                                    <div className="btns">
+                                      <Link to={`/action/?id=${id}`}>
+                                        <button disabled={status} className={status ? "text-gray-400" : "text-black"}>
+                                          <BiEditAlt />
+                                        </button>
+                                      </Link>
+                                      <button
+                                        onClick={() => handleDel(id)}
+                                        disabled={status}
+                                        className={status ? "text-gray-400" : "text-black"}>
+                                        <BiTrash />
+                                      </button>
+                                    </div>
+                                  </td>
+                                </tr>
+                              );
+                            })
+                          ) : (
+                            <tr><td>No Data ....</td></tr>
+                          )}
+                        </td>
+
+                      </tr>
+
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
-            <div className="overflow-hidden">
-              <table className="w-full min-w-[460px]">
-
-                <tbody>
-
-                  <tr>
-                    <td className="py-2 px-4 border-b border-b-gray-50 bg-gray-100">
-                      {tasks?.length > 0 ? (
-                        tasks?.map((i, index) => {
-                          const { id, task, status } = i;
-                          return (
-                            <tr key={index} className="w-full">
-                              <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left text-blueGray-700">
-                                <input
-                                  type="checkbox"
-                                  name="status"
-                                  value={status}
-                                  checked={status}
-                                  onChange={() => changeStatus(id)}
-                                />
-                              </th>
-                              <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 whitespace-nowrap p-4 text-lg">
-                                <p className={status ? "text-gray-400 line-through" : "text-black "}
-                                  onClick={() => changeStatus(id)}>
-                                  {task}
-                                </p>
-                              </td>
-                              <td>
-                                <div className="btns">
-                                  <Link to={`/action/?id=${id}`}>
-                                    <button disabled={status} className={status ? "text-gray-400" : "text-black"}>
-                                      <BiEditAlt />
-                                    </button>
-                                  </Link>
-                                  <button
-                                    onClick={() => handleDel(id)}
-                                    disabled={status}
-                                    className={status ? "text-gray-400" : "text-black"}>
-                                    <BiTrash />
-                                  </button>
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })
-                      ) : (
-                        <tr><td>No Data ....</td></tr>
-                      )}
-                    </td>
-
-                  </tr>
-
-                </tbody>
-              </table>
-            </div>
           </div>
-        </div>
+        </DragDropContext>
       </div>
     </main>
-    "
+
   </div>
 }
 
