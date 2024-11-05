@@ -73,6 +73,18 @@ const Display = () => {
     }
   };
 
+  const isDeadlineApproaching = (deadline) => {
+    const today = new Date();
+    const twoDaysFromNow = new Date(today);
+    twoDaysFromNow.setDate(today.getDate() + 2);
+    const deadlineDate = new Date(deadline);
+
+    return deadlineDate <= twoDaysFromNow && deadlineDate >= today;
+  }
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
   return (
     <div className=" ">
       <div className="flex flex-col  gap-2">
@@ -89,7 +101,8 @@ const Display = () => {
                 {tasks?.length > 0 ? (
                   tasks?.map((i, index) => {
                     console.log('i', i)
-                    const { id, task, status } = i;
+                    const { id, task, status, deadline } = i;
+                    const approaching = isDeadlineApproaching(deadline);
                     return (
                       <tr key={index}>
                         <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left text-blueGray-700">
@@ -102,10 +115,13 @@ const Display = () => {
                           />
                         </th>
                         <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 whitespace-nowrap p-4 text-lg">
-                          <p className={status ? "text-gray-400 line-through" : "text-black "}
+                          <p className={`${status ? "text-gray-400 line-through" : approaching ? "text-red-500" : "text-black"}`}
                             onClick={() => changeStatus(id)}>
                             {task}
                           </p>
+                        </td>
+                        <td className={`${approaching ? "text-sm text-red-500" : "text-sm text-black"}`}>
+                          {formatDate(deadline)}
                         </td>
                         <td>
                           <div className="btns">
