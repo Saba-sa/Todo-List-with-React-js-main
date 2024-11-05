@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { auth, googleProvider } from "../firebaseConfig"; // Make sure firebaseConfig exports auth and googleProvider
+import { auth, googleProvider } from "../firebaseConfig";
 import {
   createUserWithEmailAndPassword,
   signInWithPopup,
@@ -11,7 +11,7 @@ import { useAppStore } from "../hooks/Context";
 
 const Signup = () => {
   const navigate = useNavigate();
-  const { setUserId } = useAppStore();
+  const { setUserId, setEmail } = useAppStore();
 
   const [detail, setDetail] = useState({
     email: "",
@@ -32,10 +32,10 @@ const Signup = () => {
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      setUserId(userCredential.user.uid);
+      setUserId(userCredential?.user?.uid);
       console.log('usercredential', userCredential)
       console.log('usercredential', userCredential.user)
-      if (userCredential.user.email === detail.email) {
+        setEmail(detail.email);
         setDetail({
           email: "",
           password: "",
@@ -44,7 +44,6 @@ const Signup = () => {
         setLoader(false);
 
         navigate('/home');
-      }
     } catch (error) {
       setLoader(false);
 
@@ -59,7 +58,7 @@ const Signup = () => {
       const result = await signInWithPopup(auth, googleProvider);
       setUserId(result.user.uid);
 
-      if (result.user.email === detail.email) {
+        setEmail(detail.email);
         setDetail({
           email: "",
           password: "",
@@ -68,7 +67,6 @@ const Signup = () => {
         setLoader(false);
 
         navigate('/home');
-      }
     } catch (error) {
       setLoader(false);
 

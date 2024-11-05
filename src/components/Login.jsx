@@ -7,7 +7,7 @@ import { useAppStore } from "../hooks/Context";
 
 
 const Login = () => {
-  const { setUserId } = useAppStore();
+  const { setUserId, setEmail } = useAppStore();
 
   const [detail, setDetail] = useState({
     email: '',
@@ -28,6 +28,7 @@ const Login = () => {
           email: "",
           password: "",
         });
+        setEmail(result.user.email);
         setLoader(false);
         navigate('/home');
       }
@@ -42,6 +43,7 @@ const Login = () => {
     try {
       const t = await signInWithEmailAndPassword(auth, email, password);
       setUserId(t.user.uid);
+      setEmail(t.user.email);
 
       if (t) {
         setDetail({

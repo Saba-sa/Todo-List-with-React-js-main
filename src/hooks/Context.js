@@ -13,19 +13,28 @@ const Context = ({ children }) => {
   const [status, setstatus] = useState(true);
   const [editTask, seteditTask] = useState({});
   const [userId, setUserId] = useState('');
+  const [email, setEmail] = useState('@gmail.com');
 
   useEffect(() => {
     if (tasks.length > 0) {
       localStorage.setItem("tasks", JSON.stringify(tasks));
     }
   }, [tasks]);
+  useEffect(() => {
+    if (userId.length > 0) {
+      localStorage.setItem("userid", JSON.stringify(userId));
+    }
+    if (userId) {
+      fetchTasks();
+    }
+  }, [userId]);
 
   useEffect(() => {
-
-
     let temp = JSON.parse(localStorage.getItem("tasks")) || [];
-    if (temp && temp.length > 0) {
+    let user = JSON.parse(localStorage.getItem("userid")) || "";
+    if (temp.length > 0 && user) {
       settasks(temp)
+      setUserId(user);
     }
 
   }, []);
@@ -35,16 +44,15 @@ const Context = ({ children }) => {
       alert("Please login again");
       return;
     }
-
     try {
-      console.log('inside');
       const tasksCollection = collection(db, "users", userId, "tasks");
       const taskSnapshot = await getDocs(tasksCollection);
       const taskList = taskSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       const temp = [];
       console.log('tasklist', taskList);
       taskList.map(doc => {
-        temp.push(doc.task.newTask);
+        console.log(doc.task)
+        temp.push(doc.task);
       })
       console.log('temp', temp);
       settasks(temp);
@@ -54,15 +62,10 @@ const Context = ({ children }) => {
     }
   };
 
-  useEffect(() => {
-    if (userId) {
-      fetchTasks();
-    }
-  }, [userId]);
 
   return (
     <DataContext.Provider
-      value={{ tasks, settasks, status, setstatus, editTask, seteditTask, userId, setUserId }}
+      value={{ tasks, settasks, status, setstatus, editTask, seteditTask, userId, setUserId, email, setEmail }}
     >
       {children}
     </DataContext.Provider>

@@ -3,7 +3,7 @@ import { useAppStore } from "../hooks/Context";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import { db } from "../firebaseConfig";
-import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
 
 const Action = () => {
   const [searchParams] = useSearchParams();
@@ -31,11 +31,22 @@ const Action = () => {
       let temp = tasks.map(i => (i.id).toString() === idFromUrl ? tempItem : i);
 
       settasks(temp);
-      const taskRef = doc(db, "users", userId, "tasks", idFromUrl);
-      console.log("Document path:", `users/${userId}/tasks/${idFromUrl}`);
+
+      const tasksCollection = collection(db, "users", userId, "tasks");
+      const taskSnapshot = await getDocs(tasksCollection);
+
+      const tasksArray = taskSnapshot?.docs?.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      const updatedArray = tasksArray.filter(task => {
+        console.log(task)
+        return task.task.id === idFromUrl;
+      })
+      const taskRef = doc(db, "users", userId, "tasks", updatedArray[0].id);
 
       await updateDoc(taskRef, {
-        task: item,
+        task: tempItem
       });
 
 
@@ -56,7 +67,7 @@ const Action = () => {
       try {
         const newTask = { id: uuidv4().slice(0, 4), task: item, status: false };
         settasks(prevTasks => [...prevTasks, newTask]);
-        await addDoc(collection(db, "users", userId, "tasks"), { task: newTask  });
+        await addDoc(collection(db, "users", userId, "tasks"), { task: newTask });
         setItem("");
         setErr(false);
         navigate('/home');
